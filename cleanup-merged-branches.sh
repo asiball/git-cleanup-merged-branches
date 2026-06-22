@@ -126,7 +126,13 @@ if [ "$DO_DELETE" -ne 1 ]; then
 fi
 
 echo
-read -r -p "上記 ${#merged[@]} 件のマージ済みブランチを $REMOTE から削除します。よろしいですか? [y/N] " ans
+# curl | bash 経由でも確認プロンプトを効かせるため /dev/tty から読む
+if [ -r /dev/tty ]; then
+  read -r -p "上記 ${#merged[@]} 件のマージ済みブランチを $REMOTE から削除します。よろしいですか? [y/N] " ans </dev/tty
+else
+  echo "対話端末がありません。削除は端末から実行してください。" >&2
+  exit 1
+fi
 case "$ans" in
   y|Y|yes|YES) ;;
   *) echo "中止しました。"; exit 0 ;;
